@@ -1438,8 +1438,8 @@ let lastYouPts=0, lastCpuPts=0;
 function updateScores(){
   const youEl=document.getElementById('youPts');
   const cpuEl=document.getElementById('cpuPts');
-  const newYou=scoreTableauWithDia(youTableau,youDiamonds,null);
-  const newCpu=scoreTableauWithDia(cpuTableau,cpuDiamonds,null);
+  const newYou=scoreTableau(youTableau);
+  const newCpu=scoreTableau(cpuTableau);
   if(newYou!==lastYouPts){youEl.classList.remove('score-change');void youEl.offsetWidth;youEl.classList.add('score-change');}
   if(newCpu!==lastCpuPts){cpuEl.classList.remove('score-change');void cpuEl.offsetWidth;cpuEl.classList.add('score-change');}
   youEl.textContent=newYou;
