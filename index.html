@@ -1617,62 +1617,12 @@ function checkPlayerResult(){
   // Card match?
   const matches=table.map((card,i)=>card&&facesMatch(card.combo,faces)?{card,i}:null).filter(Boolean);
   if(matches.length>0){
-
-    const best=matches.reduce((a,b)=>b.card.pts>a.card.pts?b:a);
     const targetTableau = isP2turn ? cpuTableau : youTableau;
     const targetWho = isP2turn ? 'cpu' : 'you';
 
-    // If rolls remaining → ask player: take or keep rolling
-    if(attempts < 3){
-      pendingMatch = {card:best.card, cardIdx:best.i, targetTableau, targetWho};
-      showCardChoicePopup(best.i, best.card);
-      document.getElementById('btnRoll').disabled=false;
-      return;
-    }
-
-    // No rolls left → auto-take
-    const cardEls=document.querySelectorAll('.card');
-    const winEl=cardEls[best.i];
-    const extraMsg=matches.length>1?` (${matches.length} möglich – höchste genommen)`:'';
-    playSuccess();
-    showBanner(`+${best.card.pts} Pts!`,'',COLORS_HEX[best.card.color]);
-    spawnFloatingPts('+'+best.card.pts, COLORS_HEX[best.card.color]);
-    showMsg(`${best.card.color.toUpperCase()} · ${best.card.pts} Punkte!${extraMsg}`);
-
-    // Step 1: flash then puff out won card
-    winEl?.classList.add('flash-match');
-    setTimeout(()=>{
-      winEl?.classList.remove('flash-match');
-      winEl?.classList.add('puff-out');
-    }, 400);
-
-    // Step 2: add to tableau with bounce-in after puff
-    setTimeout(()=>{
-      table[best.i]=null;
-      placeCard(targetTableau, best.card);
-      checkSofortBonuses(targetWho);
-      // Mark last added card for animation
-      const col = best.card.color==='white' ? ['red','yellow','blue'].find(c=>{
-        const t=targetTableau[c]||[];
-        return t[t.length-1]&&t[t.length-1].pts===best.card.pts;
-      }) : best.card.color;
-      const tabId = isP2turn ? 'cpuTableau' : 'youTableau';
-      renderTableaux();
-      // Find last card in that column and bounce it
-      const tabEl=document.getElementById(tabId);
-      if(tabEl&&col){
-        const cols=tabEl.querySelectorAll('.tableau-col');
-        cols.forEach(colEl=>{
-          const cards=colEl.querySelectorAll('.t-card');
-          if(cards.length>0) cards[cards.length-1].classList.add('new-card');
-        });
-      }
-    }, 550);
-
-    // Step 3: refill table card with slide-in
-    setTimeout(()=>{
-      isP2turn?endPlayerTurn(false):endPlayerTurn(false);
-    }, 1050);
+    // Always let the player choose — whether rolls remain or not
+    showCardChoicePopup(matches, targetTableau, targetWho, attempts < 3);
+    document.getElementById('btnRoll').disabled = true;
     return;
   }
 
@@ -1988,7 +1938,8 @@ const MISS_MSGS = ["Och nö!","Pech gehabt!","Nächstes Mal!","So ein Mist!","Wa
 const HIT_MSGS = {red:"Rot! Boom!",yellow:"Gelb! Nice!",blue:"Blau! Jawoll!",white:"Weiß! Joker!"};
 // ── DIAMOND LOGIC ──
 let diaSelectedDie = null;
-let pendingMatch = null; // {card, cardIdx, targetTableau, targetWho}
+let pendingMatches = null;
+let pendingTarget = null;
 
 function updateDiamondBar(){
   // Yolo strip diamonds: show active player's diamonds
@@ -2177,19 +2128,8 @@ function checkPlayerResultAfterDia(){
     });
 
     if(matches.length > 0){
-      const best = matches.reduce((a,b) => b.card.pts > a.card.pts ? b : a);
-      const cardEls = document.querySelectorAll('.card');
-      if(cardEls[best.i]) {
-        cardEls[best.i].classList.add('flash-match');
-        setTimeout(()=>{ if(cardEls[best.i]) cardEls[best.i].classList.remove('flash-match'); }, 600);
-      }
-      playSuccess();
-      showBanner('+'+best.card.pts+' Pts!', '', COLORS_HEX[best.card.color]);
-      showMsg(best.card.color.toUpperCase()+' · '+best.card.pts+' Punkte!');
-      placeCard(activeTab, best.card);
-      checkSofortBonuses(activeWho);
-      table[best.i] = null;
-      setTimeout(endFn, 700);
+      // Let player choose even after diamond re-roll (no keep-rolling option)
+      showCardChoicePopup(matches, activeTab, activeWho, false);
       return;
     }
 
@@ -2227,40 +2167,62 @@ function scoreTableauWithDia(tableau, diamonds, trackFor){
 
 // ── START ──
 
-function showCardChoicePopup(cardIdx, card){
-  const cardEls = document.querySelectorAll('.card');
-  const cardEl = cardEls[cardIdx];
+// matches = [{card, i}, ...], canKeepRolling = bool
+function showCardChoicePopup(matches, targetTableau, targetWho, canKeepRolling){
   const popup = document.getElementById('cardChoicePopup');
   const title = document.getElementById('cardChoiceTitle');
-  title.textContent = card.pts + ' Punkte nehmen?';
-  title.style.color = card.color==='yellow' ? '#fff' : (COLORS_HEX[card.color] || 'var(--text)');
-  title.style.textShadow = card.color==='yellow' ? '0 1px 3px rgba(0,0,0,.4)' : '';
-
-  // Position popup above the card, relative to phone-frame container
-  if(cardEl){
-    const frame = document.querySelector('.phone-frame') || document.body;
-    const frameRect = frame.getBoundingClientRect();
-    const rect = cardEl.getBoundingClientRect();
-    const popupWidth = 170;
-    const frameWidth = frameRect.width || 390;
-    const relLeft = rect.left - frameRect.left + rect.width/2 - popupWidth/2;
-    const relTop = rect.top - frameRect.top + (document.querySelector('.phone-frame-inner')?.scrollTop||0) - 170;
-    // Clamp so popup stays inside frame
-    const clampedLeft = Math.max(8, Math.min(relLeft, frameWidth - popupWidth - 8));
-    popup.style.left = clampedLeft + 'px';
-    popup.style.top = Math.max(8, relTop) + 'px';
-  }
-  // Player color on take button
-  const btn = document.getElementById('btnTakeCard');
+  const btnsEl = document.querySelector('.card-choice-btns');
   const isP1 = !(gameMode==='human' && turnPhase==='cpu');
-  btn.className = 'btn-take-card' + (isP1 ? ' p1-color' : '');
+
+  pendingMatches = matches;
+  pendingTarget = {targetTableau, targetWho};
+
+  title.textContent = matches.length > 1 ? 'Welche Karte nehmen?' : matches[0].card.pts + ' Punkte nehmen?';
+  title.style.color = 'var(--text)';
+  title.style.textShadow = '';
+
+  // Rebuild buttons dynamically
+  btnsEl.innerHTML = '';
+  matches.forEach(({card, i}) => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-take-card' + (isP1 ? ' p1-color' : '');
+    const colorLabel = {red:'Rot',yellow:'Gelb',blue:'Blau',white:'Weiß'}[card.color] || card.color;
+    btn.textContent = '✓ ' + colorLabel + ' · ' + card.pts + ' Pts';
+    if(!isP1) btn.style.background = 'linear-gradient(135deg,var(--violet),var(--pink))';
+    btn.onclick = () => takeCardChoice(i);
+    btnsEl.appendChild(btn);
+  });
+
+  if(canKeepRolling){
+    const rollBtn = document.createElement('button');
+    rollBtn.className = 'btn-keep-rolling';
+    rollBtn.textContent = 'Nochmal würfeln →';
+    rollBtn.onclick = keepRollingChoice;
+    btnsEl.appendChild(rollBtn);
+  }
+
+  // Position centered above cards row
+  const cardsRow = document.getElementById('cardsRow');
+  const frame = document.querySelector('.phone-frame') || document.body;
+  const frameRect = frame.getBoundingClientRect();
+  const popupWidth = 190;
+  const frameWidth = frameRect.width || 390;
+  if(cardsRow){
+    const rowRect = cardsRow.getBoundingClientRect();
+    const relLeft = rowRect.left - frameRect.left + rowRect.width/2 - popupWidth/2;
+    const popupHeight = 100 + matches.length * 42 + (canKeepRolling ? 36 : 0);
+    const relTop = rowRect.top - frameRect.top + (document.querySelector('.phone-frame-inner')?.scrollTop||0) - popupHeight - 10;
+    popup.style.left = Math.max(8, Math.min(relLeft, frameWidth - popupWidth - 8)) + 'px';
+    popup.style.top = Math.max(8, relTop) + 'px';
+    popup.style.width = popupWidth + 'px';
+  }
+
+  // Highlight all matching cards
+  document.querySelectorAll('.card').forEach((c, ci) => {
+    if(matches.some(m => m.i === ci)) c.classList.add('card-highlighted');
+  });
 
   popup.classList.add('show');
-
-  // Highlight the matched card (overlay dims the rest)
-  document.querySelectorAll('.card').forEach((c,ci)=>{
-    if(ci===cardIdx) c.classList.add('card-highlighted');
-  });
   document.getElementById('btnRoll').disabled = true;
 }
 
@@ -2270,15 +2232,19 @@ function hideCardChoicePopup(){
     c.classList.remove('flash-match');
     c.classList.remove('card-highlighted');
   });
-  pendingMatch = null;
+  pendingMatches = null;
+  pendingTarget = null;
   document.getElementById('btnRoll').disabled = false;
 }
 
-function takeCardChoice(){
-  if(!pendingMatch) return;
-  const {card, cardIdx, targetTableau, targetWho} = pendingMatch;
+function takeCardChoice(cardIdx){
+  if(!pendingMatches || !pendingTarget) return;
+  const match = pendingMatches.find(m => m.i === cardIdx);
+  if(!match) return;
+  const {card} = match;
+  const {targetTableau, targetWho} = pendingTarget;
   hideCardChoicePopup();
-  document.getElementById('btnRoll').disabled=true;
+  document.getElementById('btnRoll').disabled = true;
 
   const cardEls = document.querySelectorAll('.card');
   const winEl = cardEls[cardIdx];
@@ -2305,7 +2271,7 @@ function takeCardChoice(){
 
 function keepRollingChoice(){
   hideCardChoicePopup();
-  // Player keeps their dice and rolls again – popup dismissed, game continues
+  // Player keeps their dice and rolls again
 }
 
 
