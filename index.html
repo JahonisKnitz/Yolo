@@ -769,6 +769,12 @@ body{
   <img src="YoloAppsplash.png" style="width:100%;display:block;flex-shrink:0;" alt="YOLO Splash">
   <div style="flex:1;width:100%;background:#ff2dac;"></div>
   <div style="position:absolute;bottom:0;left:0;right:0;padding:24px 24px 36px;display:flex;flex-direction:column;align-items:center;gap:12px;">
+    <!-- Language switcher -->
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:2px;">
+      <button class="lang-btn" data-lang="de" onclick="setLang('de')" style="background:rgba(255,255,255,.45);border:1.5px solid rgba(255,255,255,.6);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.12em;padding:6px 16px;border-radius:30px;cursor:pointer;font-weight:700;transition:background .2s;">DE</button>
+      <button class="lang-btn" data-lang="nl" onclick="setLang('nl')" style="background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.4);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.12em;padding:6px 16px;border-radius:30px;cursor:pointer;font-weight:400;transition:background .2s;">NL</button>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')" style="background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.4);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.12em;padding:6px 16px;border-radius:30px;cursor:pointer;font-weight:400;transition:background .2s;">EN</button>
+    </div>
     <button class="glass-btn" onclick="goToTutorial()" style="width:100%;background:rgba(255,255,255,.18);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1.5px solid rgba(255,255,255,.45);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.18em;padding:14px;border-radius:50px;cursor:pointer;box-shadow:0 2px 0 rgba(255,255,255,.2) inset,0 4px 16px rgba(0,0,0,.15);text-shadow:0 1px 4px rgba(0,0,0,.2);transition:background .2s;">SPIELEN</button>
   </div>
 </div>
@@ -783,7 +789,7 @@ body{
       <div class="go-score-item"><span class="go-score-num" id="goCpuPts">0</span><span class="go-score-lbl" id="goCpuLbl">Spieler 2</span></div>
     </div>
     <div class="go-details" id="goDetails"></div>
-    <button class="btn-new-game" onclick="showModeScreen()">Neues Spiel</button>
+    <button class="btn-new-game" id="btnNewGame" onclick="showModeScreen()">Neues Spiel</button>
   </div>
 </div>
 
@@ -794,14 +800,14 @@ body{
   <div class="scorebar">
     <div class="player-score">
       <div class="player-name-row">
-        <div class="player-name">Spieler 1</div>
+        <div class="player-name" id="p1Name">Spieler 1</div>
       </div>
       <div class="player-pts" id="youPts">0</div>
     </div>
     <div class="vs-divider">VS</div>
     <div class="player-score cpu">
       <div class="player-name-row cpu-row">
-        <div class="player-name">Spieler 2</div>
+        <div class="player-name" id="p2Name">Spieler 2</div>
       </div>
       <div class="player-pts" id="cpuPts">0</div>
     </div>
@@ -822,7 +828,7 @@ body{
 
   <!-- BONUSES -->
   <div class="bonuses-area">
-    <div class="panel-title" style="text-align:center;">Bonusaufträge</div>
+    <div class="panel-title" id="bonusAreaTitle" style="text-align:center;">Bonusaufträge</div>
     <div class="bonus-grid" id="bonusGrid"></div>
   </div>
 
@@ -838,7 +844,7 @@ body{
         <div class="yolo-player-dias" id="yoloDiaPips"></div>
       </div>
       <div class="yolo-right">
-        <div class="yolo-sub">alle drei Karten bei</div>
+        <div class="yolo-sub" id="yoloSub">alle drei Karten bei</div>
         <div class="yolo-dice">
           <div class="md ltr ltr-Y">Y</div><div class="md ltr ltr-O">O</div><div class="md ltr ltr-L">L</div><div class="md ltr ltr-O">O</div>
         </div>
@@ -847,7 +853,7 @@ body{
     </div>
     <!-- DICE -->
     <div class="dice-row" id="diceRow"></div>
-    <div class="hint">Würfel anklicken zum Festhalten ✦</div>
+    <div class="hint" id="diceHint">Würfel anklicken zum Festhalten ✦</div>
     <!-- CONTROLS -->
     <div class="controls">
       <button class="btn-roll" id="btnRoll" onclick="playerRoll()" style="opacity:0;pointer-events:none;">Würfeln</button>
@@ -881,11 +887,11 @@ body{
     <!-- centered bubble -->
     <div style="position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:center;padding-top:160px;pointer-events:none;">
       <div id="diaBubble" class="card-choice-bubble" style="position:relative;pointer-events:auto;animation:bubble-pop-in .3s cubic-bezier(.22,1.4,.36,1);">
-        <div class="card-choice-title" style="color:#00c0a8;">◆ Welchen Würfel neu würfeln?</div>
+        <div class="card-choice-title" id="diaPopupTitle" style="color:#00c0a8;">◆ Welchen Würfel neu würfeln?</div>
         <div id="diaPopupDice" style="display:flex;gap:6px;justify-content:center;margin:8px 0 4px;"></div>
         <div class="card-choice-btns">
           <button id="btnDiaConfirm" class="btn-take-card" onclick="confirmDiaRoll()" disabled style="opacity:.4;transition:opacity .2s;">◆ Neu würfeln</button>
-          <button class="btn-keep-rolling" onclick="endTurnFromChoice()">Zug beenden →</button>
+          <button class="btn-keep-rolling" id="btnEndTurnDia" onclick="endTurnFromChoice()">Zug beenden →</button>
         </div>
       </div>
     </div>
@@ -902,9 +908,206 @@ body{
 
 
 
+// ── TRANSLATIONS ──
+let lang = 'de';
+
+const I18N = {
+  de: {
+    player1: 'Spieler 1', player2: 'Spieler 2',
+    yourTurn: 'SPIELER 1', cpuTurn: 'SPIELER 2',
+    yourTurnSolo: 'DEIN ZUG', cpuTurnSolo: 'CPU ZUG',
+    roll: 'Würfeln',
+    holdHint: 'Würfel anklicken zum Festhalten ✦',
+    held: 'Gehalten', hold: 'Halten',
+    bonuses: 'Bonusaufträge',
+    sofort: '⚡ Sofort', langzeit: '★ Langzeit',
+    allThreeCards: 'alle drei Karten bei',
+    newGame: 'Neues Spiel',
+    play: 'SPIELEN',
+    skip: 'Überspringen',
+    yoloAllCards: 'YOLO! Alle 3 Karten!',
+    noHit: 'Kein Treffer',
+    diaOrEnd: '◆ einsetzen oder Zug beenden?',
+    diaSpent: 'Diamant verbraucht – nächster Spieler',
+    diaSameTurn: 'Diamanten können nicht im selben Zug genutzt werden',
+    attemptsLeft: (n) => `${n} Versuch${n>1?'e':''} verbleibend`,
+    whichCard: 'Welche Karte nehmen?',
+    cardTake: (pts) => `${pts} Punkte nehmen?`,
+    keepRolling: 'Nochmal würfeln →',
+    endTurn: 'Zug beenden →',
+    reroll: '◆ Neu würfeln',
+    whichDie: '◆ Welchen Würfel neu würfeln?',
+    won: (p) => p + ' GEWINNT!',
+    wonSolo: 'GEWONNEN!', lost: 'VERLOREN', draw: 'UNENTSCHIEDEN',
+    sofortBonus: (who, desc, pts) => `${who} kassiert Sofortbonus: ${desc} (+${pts} Pts)!`,
+    youLabel: 'Du', cpuLabel: 'CPU',
+    completeRows: (n) => `${n} vollst. Zeilen`,
+    diaRows: (n) => ` (inkl. ${n} Zeile${n>1?'n':''} per ◆)`,
+    tableauPts: 'Tableau-Punkte',
+    bonusPts: 'Bonuspunkte',
+    whiteCardTitle: 'Weiße Karte (Joker)',
+    colorLabel: {red:'Rot', yellow:'Gelb', blue:'Blau', white:'Weiß'},
+    rollMsgsP1: ['Los gehts!','Komm schon!','Würfel, Baby!','Zeig was du kannst!','Jetzt oder nie!'],
+    rollMsgsP2: ['Spieler 2 – du bist dran!','Zeig mal!','Ran an die Würfel!','Na dann!','Dein Zug!'],
+    missMsgs: ['Och nö!','Pech gehabt!','Nächstes Mal!','So ein Mist!','War nix...'],
+    tut: {
+      p1title:'WIE GEHT DAS?', p2title:'DIE WÜRFEL', p3title:'PUNKTE & YOLO',
+      goal:'DAS ZIEL', goalText:'Sammle Karten und bilde vollständige <b>Zeilen</b> aus je einer roten, gelben und blauen Karte. Nur vollständige Zeilen bringen Punkte!',
+      auslage:'DIE AUSLAGE', auslageText:'3 Karten liegen offen – jede mit einer Würfel-Kombi. Triff die Kombi → Karte gewinnen!',
+      next:'WEITER →', skip:'Überspringen', start:"LOS GEHT'S! 🎲",
+      diceTitle:'6 SEITEN – 4 WÜRFEL', turnTitle:'🎲 DEIN ZUG',
+      step1:'Würfle bis zu <b>3 Mal</b>. Halte Würfel zwischen den Würfen fest.',
+      step2:'Treffe die Kombination einer Karte → Karte nehmen!',
+      step3:'◆ bei Fehlwürfen → Diamanten sammeln → Extra-Würfe!',
+      scoreTitle:'Karten kommen in Spalten (Rot, Gelb, Blau). Jede vollständige <b>Zeile</b> aus 3 Farben bringt Punkte:',
+      whiteJoker:'Weiße Karten sind Joker – passen in jede Spalte!',
+      yoloTitle:'✦ YOLO!', yoloText:'Würfelst du <b>Y·O·L·O</b> mit allen 4 Würfeln? Alle 3 Karten auf einmal!',
+      bonusTitle:'★ BONUSAUFTRÄGE', bonusText:'Sofort-Boni: sofort kassieren. Langzeit-Boni: am Ende gewinnt, wer mehr hat!'
+    },
+    bonusDescs: {
+      S1:'5 Karten mit 2-Würfel-Kombi', S2:'Spalte aus 5 Karten', S3:'3 weiße Karten im Tableau',
+      S4:'3 Karten unter 4 Punkten', S5:'4 gelbe Karten', S6:'Vollständige Zeile ohne weiße Karte',
+      S7:'2 Karten mit 8 oder 9 Punkten', S8:'Karten aller 4 Farben im Tableau',
+      S9:'6 Karten im Tableau', S10:'Straße: 5 aufeinanderfolgende Punktwerte', S11:'Spalte aus 4 Karten',
+      L1:'Meiste gelbe Karten', L2:'Längste Spalte am Spielende', L3:'Meiste blaue Karten',
+      L4:'Meiste rote Karten', L5:'Meiste Karten mit 2 oder 3 Punkten'
+    }
+  },
+  nl: {
+    player1: 'Speler 1', player2: 'Speler 2',
+    yourTurn: 'SPELER 1', cpuTurn: 'SPELER 2',
+    yourTurnSolo: 'JOUW BEURT', cpuTurnSolo: 'CPU BEURT',
+    roll: 'Gooien',
+    holdHint: 'Klik op een dobbelsteen om te houden ✦',
+    held: 'Gehouden', hold: 'Houden',
+    bonuses: 'Bonusopdrachten',
+    sofort: '⚡ Direct', langzeit: '★ Einddoel',
+    allThreeCards: 'alle drie kaarten bij',
+    newGame: 'Nieuw spel',
+    play: 'SPELEN',
+    skip: 'Overslaan',
+    yoloAllCards: 'YOLO! Alle 3 kaarten!',
+    noHit: 'Geen treffer',
+    diaOrEnd: '◆ gebruiken of beurt beëindigen?',
+    diaSpent: 'Diamant gebruikt – volgende speler',
+    diaSameTurn: 'Diamanten kunnen niet in dezelfde beurt worden gebruikt',
+    attemptsLeft: (n) => `${n} poging${n>1?'en':''} over`,
+    whichCard: 'Welke kaart nemen?',
+    cardTake: (pts) => `${pts} punten nemen?`,
+    keepRolling: 'Nog een keer gooien →',
+    endTurn: 'Beurt beëindigen →',
+    reroll: '◆ Opnieuw gooien',
+    whichDie: '◆ Welke dobbelsteen opnieuw gooien?',
+    won: (p) => p + ' WINT!',
+    wonSolo: 'GEWONNEN!', lost: 'VERLOREN', draw: 'GELIJKSPEL',
+    sofortBonus: (who, desc, pts) => `${who} verdient directe bonus: ${desc} (+${pts} Pts)!`,
+    youLabel: 'Jij', cpuLabel: 'CPU',
+    completeRows: (n) => `${n} volledige rij${n>1?'en':''}`,
+    diaRows: (n) => ` (incl. ${n} rij${n>1?'en':''} via ◆)`,
+    tableauPts: 'Tableau-punten',
+    bonusPts: 'Bonuspunten',
+    whiteCardTitle: 'Witte kaart (joker)',
+    colorLabel: {red:'Rood', yellow:'Geel', blue:'Blauw', white:'Wit'},
+    rollMsgsP1: ['Gooi maar!','Kom op!','Gooi, baby!','Laat zien wat je kan!','Nu of nooit!'],
+    rollMsgsP2: ['Speler 2 – jij bent!','Kom op dan!','Gooi die dobbelstenen!','Dan maar!','Jouw beurt!'],
+    missMsgs: ['Helaas!','Pech!','Volgende keer!','Wat jammer!','Niks aan...'],
+    tut: {
+      p1title:'HOE WERKT HET?', p2title:'DE DOBBELSTENEN', p3title:'PUNTEN & YOLO',
+      goal:'HET DOEL', goalText:'Verzamel kaarten en maak complete <b>rijen</b> van een rode, gele en blauwe kaart. Alleen complete rijen leveren punten op!',
+      auslage:'DE UITLEG', auslageText:'3 kaarten liggen open – elk met een dobbelsteen-combo. Raak de combo → kaart winnen!',
+      next:'VOLGENDE →', skip:'Overslaan', start:'LOS! 🎲',
+      diceTitle:'6 KANTEN – 4 DOBBELSTENEN', turnTitle:'🎲 JOUW BEURT',
+      step1:'Gooi tot <b>3 keer</b>. Houd dobbelstenen vast tussen de worpen.',
+      step2:'Raak de combinatie van een kaart → kaart nemen!',
+      step3:'◆ bij misworpen → diamanten verzamelen → Extra worpen!',
+      scoreTitle:'Kaarten komen in kolommen (Rood, Geel, Blauw). Elke complete <b>rij</b> van 3 kleuren geeft punten:',
+      whiteJoker:'Witte kaarten zijn jokers – passen in elke kolom!',
+      yoloTitle:'✦ YOLO!', yoloText:'Gooi je <b>Y·O·L·O</b> met alle 4 dobbelstenen? Alle 3 kaarten tegelijk!',
+      bonusTitle:'★ BONUSOPDRACHTEN', bonusText:'Directe bonussen: direct ontvangen. Einddoelen: aan het einde wint wie meer heeft!'
+    },
+    bonusDescs: {
+      S1:'5 kaarten met 2-dobbelsteen-combo', S2:'Kolom van 5 kaarten', S3:'3 witte kaarten in tableau',
+      S4:'3 kaarten onder 4 punten', S5:'4 gele kaarten', S6:'Volledige rij zonder witte kaart',
+      S7:'2 kaarten met 8 of 9 punten', S8:'Kaarten van alle 4 kleuren in tableau',
+      S9:'6 kaarten in tableau', S10:'Straat: 5 opeenvolgende puntwaarden', S11:'Kolom van 4 kaarten',
+      L1:'Meeste gele kaarten', L2:'Langste kolom aan het einde', L3:'Meeste blauwe kaarten',
+      L4:'Meeste rode kaarten', L5:'Meeste kaarten met 2 of 3 punten'
+    }
+  },
+  en: {
+    player1: 'Player 1', player2: 'Player 2',
+    yourTurn: 'PLAYER 1', cpuTurn: 'PLAYER 2',
+    yourTurnSolo: 'YOUR TURN', cpuTurnSolo: 'CPU TURN',
+    roll: 'Roll',
+    holdHint: 'Click a die to hold it ✦',
+    held: 'Held', hold: 'Hold',
+    bonuses: 'Bonus Missions',
+    sofort: '⚡ Instant', langzeit: '★ End Goal',
+    allThreeCards: 'all three cards on',
+    newGame: 'New Game',
+    play: 'PLAY',
+    skip: 'Skip',
+    yoloAllCards: 'YOLO! All 3 cards!',
+    noHit: 'No match',
+    diaOrEnd: '◆ use diamond or end turn?',
+    diaSpent: 'Diamond used – next player',
+    diaSameTurn: 'Diamonds cannot be used in the same turn they were earned',
+    attemptsLeft: (n) => `${n} attempt${n>1?'s':''} left`,
+    whichCard: 'Which card to take?',
+    cardTake: (pts) => `Take ${pts} points?`,
+    keepRolling: 'Roll again →',
+    endTurn: 'End turn →',
+    reroll: '◆ Re-roll',
+    whichDie: '◆ Which die to re-roll?',
+    won: (p) => p + ' WINS!',
+    wonSolo: 'YOU WIN!', lost: 'YOU LOSE', draw: 'DRAW',
+    sofortBonus: (who, desc, pts) => `${who} earns instant bonus: ${desc} (+${pts} Pts)!`,
+    youLabel: 'You', cpuLabel: 'CPU',
+    completeRows: (n) => `${n} complete row${n>1?'s':''}`,
+    diaRows: (n) => ` (incl. ${n} row${n>1?'s':''} via ◆)`,
+    tableauPts: 'Tableau points',
+    bonusPts: 'Bonus points',
+    whiteCardTitle: 'White card (joker)',
+    colorLabel: {red:'Red', yellow:'Yellow', blue:'Blue', white:'White'},
+    rollMsgsP1: ['Here we go!','Come on!','Roll it!','Show what you got!','Now or never!'],
+    rollMsgsP2: ['Player 2 – your turn!',"Let's see!",'Roll those dice!','Go for it!','Your turn!'],
+    missMsgs: ['Oh no!','Bad luck!','Next time!','So close!','Nothing...'],
+    tut: {
+      p1title:'HOW TO PLAY?', p2title:'THE DICE', p3title:'POINTS & YOLO',
+      goal:'THE GOAL', goalText:'Collect cards and build complete <b>rows</b> of one red, yellow and blue card each. Only complete rows score points!',
+      auslage:'THE DISPLAY', auslageText:'3 cards are face up – each with a dice combo. Hit the combo → win the card!',
+      next:'NEXT →', skip:'Skip', start:"LET'S GO! 🎲",
+      diceTitle:'6 SIDES – 4 DICE', turnTitle:'🎲 YOUR TURN',
+      step1:'Roll up to <b>3 times</b>. Hold dice between rolls.',
+      step2:'Match the combination on a card → take the card!',
+      step3:'◆ on misses → collect diamonds → Extra rolls!',
+      scoreTitle:'Cards come in columns (Red, Yellow, Blue). Each complete <b>row</b> of 3 colors scores points:',
+      whiteJoker:'White cards are jokers – they fit in any column!',
+      yoloTitle:'✦ YOLO!', yoloText:'Roll <b>Y·O·L·O</b> with all 4 dice? All 3 cards at once!',
+      bonusTitle:'★ BONUS MISSIONS', bonusText:'Instant bonuses: collect right away. End goals: most at the end wins!'
+    },
+    bonusDescs: {
+      S1:'5 cards with 2-die combo', S2:'Column of 5 cards', S3:'3 white cards in tableau',
+      S4:'3 cards under 4 points', S5:'4 yellow cards', S6:'Complete row without white card',
+      S7:'2 cards with 8 or 9 points', S8:'Cards of all 4 colors in tableau',
+      S9:'6 cards in tableau', S10:'Straight: 5 consecutive point values', S11:'Column of 4 cards',
+      L1:'Most yellow cards', L2:'Longest column at game end', L3:'Most blue cards',
+      L4:'Most red cards', L5:'Most cards with 2 or 3 points'
+    }
+  }
+};
+
+function t(key, ...args){
+  const dict = I18N[lang] || I18N.de;
+  const val = dict[key];
+  if(typeof val === 'function') return val(...args);
+  return val ?? key;
+}
+
 function startGame(){
   document.body.style.background = 'linear-gradient(160deg,#f0f0f5 0%,#e8e8ef 100%)';
   initGame();
+  applyLang();
 }
 
 // YOLO title with random fonts per letter
@@ -961,8 +1164,8 @@ function renderSplashTitle(){
 document.addEventListener('DOMContentLoaded', ()=>{
   document.body.style.background='#ff2dac';
   renderSplashTitle();
-  // Size splash to match game content height
   sizeSplashAndTutorial();
+  applyLang();
 });
 
 function sizeSplashAndTutorial(){
@@ -1020,25 +1223,25 @@ const CARD_POOL = [
 ];
 
 const ALL_SOFORT = [
-  {id:'S1', type:'sofort', pts:5,  desc:'5 Karten mit 2-Würfel-Kombi'},
-  {id:'S2', type:'sofort', pts:8,  desc:'Spalte aus 5 Karten'},
-  {id:'S3', type:'sofort', pts:4,  desc:'3 weiße Karten im Tableau'},
-  {id:'S4', type:'sofort', pts:6,  desc:'3 Karten unter 4 Punkten'},
-  {id:'S5', type:'sofort', pts:7,  desc:'4 gelbe Karten'},
-  {id:'S6', type:'sofort', pts:7,  desc:'Vollständige Zeile ohne weiße Karte'},
-  {id:'S7', type:'sofort', pts:8,  desc:'2 Karten mit 8 oder 9 Punkten'},
-  {id:'S8', type:'sofort', pts:6,  desc:'Karten aller 4 Farben im Tableau'},
-  {id:'S9', type:'sofort', pts:7,  desc:'6 Karten im Tableau'},
-  {id:'S10',type:'sofort', pts:8,  desc:'Straße: 5 aufeinanderfolgende Punktwerte'},
-  {id:'S11',type:'sofort', pts:7,  desc:'Spalte aus 4 Karten'},
+  {id:'S1', type:'sofort', pts:5},
+  {id:'S2', type:'sofort', pts:8},
+  {id:'S3', type:'sofort', pts:4},
+  {id:'S4', type:'sofort', pts:6},
+  {id:'S5', type:'sofort', pts:7},
+  {id:'S6', type:'sofort', pts:7},
+  {id:'S7', type:'sofort', pts:8},
+  {id:'S8', type:'sofort', pts:6},
+  {id:'S9', type:'sofort', pts:7},
+  {id:'S10',type:'sofort', pts:8},
+  {id:'S11',type:'sofort', pts:7},
 ];
 
 const ALL_LANGZEIT = [
-  {id:'L1', type:'langzeit',pts:11, desc:'Meiste gelbe Karten'},
-  {id:'L2', type:'langzeit',pts:11, desc:'Längste Spalte am Spielende'},
-  {id:'L3', type:'langzeit',pts:11, desc:'Meiste blaue Karten'},
-  {id:'L4', type:'langzeit',pts:11, desc:'Meiste rote Karten'},
-  {id:'L5', type:'langzeit',pts:11, desc:'Meiste Karten mit 2 oder 3 Punkten'},
+  {id:'L1', type:'langzeit',pts:11},
+  {id:'L2', type:'langzeit',pts:11},
+  {id:'L3', type:'langzeit',pts:11},
+  {id:'L4', type:'langzeit',pts:11},
+  {id:'L5', type:'langzeit',pts:11},
 ];
 
 function pickBonuses(){
@@ -1161,7 +1364,7 @@ function checkSofortBonuses(who){
     if(bonusState[b.id]) return; // already awarded
     if(checkBonus(b.id, tab)){
       bonusState[b.id]=who;
-      showMsg(`${who==='you'?'Du':'CPU'} kassiert Sofortbonus: ${b.desc} (+${b.pts} Pts)!`);
+      showMsg(t('sofortBonus', who==='you'?t('youLabel'):t('cpuLabel'), t('bonusDescs')[b.id]||b.id, b.pts));
     }
   });
 }
@@ -1236,7 +1439,7 @@ diceOwner='player';
         const el=document.createElement('div');
         el.className=`bonus-card ${b.type}`;
         el.style.cssText='opacity:0;transform:translateY(16px) scale(.88);';
-        el.innerHTML=`<div style="padding-left:6px;flex:1;min-width:0;"><div class="bonus-type">${b.type==='sofort'?'⚡ Sofort':'★ Langzeit'}</div><div class="bonus-desc">${b.desc}</div></div><div class="bonus-pts">+${b.pts}</div>`;
+        el.innerHTML=`<div style="padding-left:6px;flex:1;min-width:0;"><div class="bonus-type">${b.type==='sofort'?t('sofort'):t('langzeit')}</div><div class="bonus-desc">${t('bonusDescs')[b.id]||b.id}</div></div><div class="bonus-pts">+${b.pts}</div>`;
         grid.appendChild(el);
         requestAnimationFrame(()=>requestAnimationFrame(()=>{
           el.style.cssText='opacity:1;transform:translateY(0) scale(1);transition:opacity .4s cubic-bezier(.22,1.4,.36,1),transform .45s cubic-bezier(.22,1.4,.36,1);';
@@ -1251,7 +1454,7 @@ diceOwner='player';
       btn.disabled=false;
       requestAnimationFrame(()=>requestAnimationFrame(()=>{
         btn.style.cssText='opacity:1;transform:translateY(0) scale(1);transition:opacity .4s cubic-bezier(.22,1.4,.36,1),transform .45s cubic-bezier(.22,1.4,.36,1);';
-        showMsg(ROLL_MSGS_P1[Math.floor(Math.random()*ROLL_MSGS_P1.length)]);
+        showMsg(ROLL_MSGS_P1()[Math.floor(Math.random()*ROLL_MSGS_P1().length)]);
         setTimeout(()=>{ btn.style.cssText=''; }, 500);
       }));
     }, BONUSES.length*380+250);
@@ -1372,7 +1575,7 @@ function renderDice(){
     const sc = (!diceActive || !d.face) ? 0.8 : 1;
     die.style.transform = `rotateX(${rot*0.3}deg) rotateZ(${rot}deg) scale(${sc})`;
 
-    const lbl=document.createElement('div');lbl.className='die-lbl';lbl.textContent=d.held?'Gehalten':'Halten';
+    const lbl=document.createElement('div');lbl.className='die-lbl';lbl.textContent=d.held?t('held'):t('hold');
     wrap.appendChild(die);wrap.appendChild(lbl);
     row.appendChild(wrap);
   });
@@ -1400,7 +1603,7 @@ function renderTableau(tableau, elId){
       tc.className=`t-card ${isWhite?'white':col}`;
       tc.setAttribute('data-pts', card.pts);
       tc.textContent='';
-      tc.title=isWhite?'Weiße Karte (Joker)':'';
+      tc.title=isWhite?t('whiteCardTitle'):'';
       colEl.appendChild(tc);
     });
     el.appendChild(colEl);
@@ -1425,8 +1628,8 @@ function renderBonuses(){
     const ownerTxt=owner==='you'?'Du ✓':owner==='cpu'?'CPU ✓':'';
     el.innerHTML=`
       <div style="padding-left:6px;flex:1;min-width:0;">
-        <div class="bonus-type">${b.type==='sofort'?'⚡ Sofort':'★ Langzeit'}</div>
-        <div class="bonus-desc">${b.desc}</div>
+        <div class="bonus-type">${b.type==='sofort'?t('sofort'):t('langzeit')}</div>
+        <div class="bonus-desc">${t('bonusDescs')[b.id]||b.id}</div>
         ${ownerTxt?`<div class="bonus-owner" style="color:${owner==='you'?'var(--gold)':'var(--violet)'}">${ownerTxt}</div>`:''}
       </div>
       <div class="bonus-pts">+${b.pts}</div>`;
@@ -1474,15 +1677,15 @@ function updateTurnBadge(){
     cpuPts.className='player-pts p2-color';
     if(turnPhase==='player'){
       badge.className='turn-badge your-turn';
-      badge.textContent='SPIELER 1';
+      badge.textContent=t('yourTurn');
       btn.classList.add('p1-turn');
-      if(yoloBadge){yoloBadge.className='yolo-player-name';yoloBadge.textContent='SPIELER 1';}
+      if(yoloBadge){yoloBadge.className='yolo-player-name';yoloBadge.textContent=t('yourTurn');}
       const ys=document.getElementById('yoloStrip');if(ys)ys.classList.remove('p2-strip');
     } else {
       badge.className='turn-badge cpu-turn';
-      badge.textContent='SPIELER 2';
+      badge.textContent=t('cpuTurn');
       btn.classList.remove('p1-turn');
-      if(yoloBadge){yoloBadge.className='yolo-player-name';yoloBadge.textContent='SPIELER 2';}
+      if(yoloBadge){yoloBadge.className='yolo-player-name';yoloBadge.textContent=t('cpuTurn');}
       const ys2=document.getElementById('yoloStrip');if(ys2)ys2.classList.add('p2-strip');
     }
     // Always reset YOLO mode on turn change
@@ -1491,10 +1694,10 @@ function updateTurnBadge(){
     cpuPts.className='player-pts';
     if(turnPhase==='player'){
       badge.className='turn-badge your-turn';
-      badge.textContent='DEIN ZUG';
+      badge.textContent=t('yourTurnSolo');
     } else {
       badge.className='turn-badge cpu-turn';
-      badge.textContent='CPU ZUG';
+      badge.textContent=t('cpuTurnSolo');
     }
     btn.classList.remove('p1-turn');
   }
@@ -1589,7 +1792,7 @@ function checkPlayerResult(){
         showBanner('YOLO! Aber du spielst normal'+diaMsg2,'','var(--muted)');
         const activeDia2=(isP2turn?cpuDiamonds:youDiamonds)-diaEarnedThisTurn;
         if(activeDia2>=1){
-          showMsg('◆ einsetzen oder Zug beenden?');
+          showMsg(t('diaOrEnd'));
           showDiaOrEndChoice();
         } else {
           showMsg(MISS_MSGS[Math.floor(Math.random()*MISS_MSGS.length)]);
@@ -1604,7 +1807,7 @@ function checkPlayerResult(){
     const isP2 = (gameMode==='human' && turnPhase==='cpu');
     document.getElementById('yoloStrip').classList.add('matched');
     showBanner('✦ YOLO ✦','yolo-r');
-    showMsg((turnPhase==='player'?'Spieler 1':'Spieler 2')+': YOLO! Alle 3 Karten!');
+    showMsg((turnPhase==='player'?t('player1'):t('player2'))+': '+t('yoloAllCards'));
     playYolo();
     const yoloTab = isP2 ? cpuTableau : youTableau;
     table.forEach(card=>{if(card)placeCard(yoloTab,card);});
@@ -1642,11 +1845,11 @@ function checkPlayerResult(){
     // Can use diamonds if they have any that were earned in a PREVIOUS turn
     const diaAvailableToUse = activeDia - diaEarnedThisTurn;
     if(diaAvailableToUse >= 1){
-      showBanner('Kein Treffer'+diaMsg,'','var(--muted)');
-      showMsg('◆ einsetzen oder Zug beenden?');
+      showBanner(t('noHit')+diaMsg,'','var(--muted)');
+      showMsg(t('diaOrEnd'));
       showDiaOrEndChoice();
     } else {
-      showBanner('Kein Treffer'+diaMsg,'','var(--muted)');
+      showBanner(t('noHit')+diaMsg,'','var(--muted)');
       showMsg(MISS_MSGS[Math.floor(Math.random()*MISS_MSGS.length)]);
       setTimeout(endMissTurn, 700);
     }
@@ -1654,7 +1857,7 @@ function checkPlayerResult(){
   }
 
   const rem=3-attempts;
-  showMsg(`${rem} Versuch${rem>1?'e':''} verbleibend`);
+  showMsg(t('attemptsLeft', rem));
 }
 
 function endPlayerTurn(wasYolo){
@@ -1676,7 +1879,7 @@ function endPlayerTurn(wasYolo){
   updateDiamondBar();
   resetBanner();
   document.getElementById('btnRoll').disabled=false;
-  showMsg(turnPhase==='player'?ROLL_MSGS_P1[Math.floor(Math.random()*ROLL_MSGS_P1.length)]:ROLL_MSGS_P2[Math.floor(Math.random()*ROLL_MSGS_P2.length)]);
+  showMsg(turnPhase==='player'?ROLL_MSGS_P1()[Math.floor(Math.random()*ROLL_MSGS_P1().length)]:ROLL_MSGS_P2()[Math.floor(Math.random()*ROLL_MSGS_P2().length)]);
 
   // ── Schritt 2: Neue Karten erst nach 700ms einblenden ──
   setTimeout(()=>{
@@ -1739,34 +1942,34 @@ function checkGameEnd(){
   const youRows=countRows(youTableau);
   const cpuRows=countRows(cpuTableau);
 
-  const p1n = 'Spieler 1';
-  const p2n = 'Spieler 2';
+  const p1n = t('player1');
+  const p2n = t('player2');
   // Update score labels
   document.getElementById('goYouLbl').textContent=p1n;
   document.getElementById('goCpuLbl').textContent=p2n;
 
   let title,titleCls;
   if(gameMode==='human'){
-    if(youTotal>cpuTotal){title=p1n+' GEWINNT!';titleCls='win';}
-    else if(cpuTotal>youTotal){title=p2n+' GEWINNT!';titleCls='win';}
-    else{title='UNENTSCHIEDEN';titleCls='draw';}
+    if(youTotal>cpuTotal){title=t('won',p1n);titleCls='win';}
+    else if(cpuTotal>youTotal){title=t('won',p2n);titleCls='win';}
+    else{title=t('draw');titleCls='draw';}
   } else {
-    if(youTotal>cpuTotal){title='GEWONNEN!';titleCls='win';}
-    else if(cpuTotal>youTotal){title='VERLOREN';titleCls='lose';}
-    else{title='UNENTSCHIEDEN';titleCls='draw';}
+    if(youTotal>cpuTotal){title=t('wonSolo');titleCls='win';}
+    else if(cpuTotal>youTotal){title=t('lost');titleCls='lose';}
+    else{title=t('draw');titleCls='draw';}
   }
 
   document.getElementById('goTitle').textContent=title;
   document.getElementById('goTitle').className='go-title '+titleCls;
   document.getElementById('goYouPts').textContent=youTotal;
   document.getElementById('goCpuPts').textContent=cpuTotal;
-  const youDiaRowTxt = youDiaRows>0 ? ` (inkl. ${youDiaRows} Zeile${youDiaRows>1?'n':''} per ◆)` : '';
-  const cpuDiaRowTxt = cpuDiaRows>0 ? ` (inkl. ${cpuDiaRows} Zeile${cpuDiaRows>1?'n':''} per ◆)` : '';
+  const youDiaRowTxt = youDiaRows>0 ? t('diaRows',youDiaRows) : '';
+  const cpuDiaRowTxt = cpuDiaRows>0 ? t('diaRows',cpuDiaRows) : '';
   document.getElementById('goDetails').innerHTML=
-    `${p1n}: ${youRows} vollst. Zeilen${youDiaRowTxt}<br>`+
-    `${p2n}: ${cpuRows} vollst. Zeilen${cpuDiaRowTxt}<br>`+
-    `Tableau-Punkte: ${p1n} ${scoreTableau(youTableau)} / ${p2n} ${scoreTableau(cpuTableau)}<br>`+
-    `Bonuspunkte: ${p1n} ${youTotal-scoreTableau(youTableau)} / ${p2n} ${cpuTotal-scoreTableau(cpuTableau)}`;
+    `${p1n}: ${t('completeRows',youRows)}${youDiaRowTxt}<br>`+
+    `${p2n}: ${t('completeRows',cpuRows)}${cpuDiaRowTxt}<br>`+
+    `${t('tableauPts')}: ${p1n} ${scoreTableau(youTableau)} / ${p2n} ${scoreTableau(cpuTableau)}<br>`+
+    `${t('bonusPts')}: ${p1n} ${youTotal-scoreTableau(youTableau)} / ${p2n} ${cpuTotal-scoreTableau(cpuTableau)}`;
 
   setTimeout(()=>{
     document.getElementById('gameOverModal').classList.add('show');
@@ -1932,9 +2135,9 @@ function playMiss(){
 
 
 
-const ROLL_MSGS_P1 = ["Los gehts!","Komm schon!","Würfel, Baby!","Zeig was du kannst!","Jetzt oder nie!"];
-const ROLL_MSGS_P2 = ["Spieler 2 – du bist dran!","Zeig mal!","Ran an die Würfel!","Na dann!","Dein Zug!"];
-const MISS_MSGS = ["Och nö!","Pech gehabt!","Nächstes Mal!","So ein Mist!","War nix..."];
+function ROLL_MSGS_P1(){ return (I18N[lang]||I18N.de).rollMsgsP1; }
+function ROLL_MSGS_P2(){ return (I18N[lang]||I18N.de).rollMsgsP2; }
+function MISS_MSGS(){ return (I18N[lang]||I18N.de).missMsgs; }
 const HIT_MSGS = {red:"Rot! Boom!",yellow:"Gelb! Nice!",blue:"Blau! Jawoll!",white:"Weiß! Joker!"};
 // ── DIAMOND LOGIC ──
 let diaSelectedDie = null;
@@ -2036,7 +2239,7 @@ function openDiaPopup(){
   const isP2 = (gameMode==='human' && turnPhase==='cpu');
   const activeDia = isP2 ? cpuDiamonds : youDiamonds;
   const available = activeDia - diaEarnedThisTurn;
-  if(available < 1){ showMsg('Diamanten können nicht im selben Zug genutzt werden'); return; }
+  if(available < 1){ showMsg(t('diaSameTurn')); return; }
   showDiaOrEndChoice();
 }
 
@@ -2112,7 +2315,7 @@ function checkPlayerResultAfterDia(){
     if(isYolo(faces)){
       document.getElementById('yoloStrip').classList.add('matched');
       showBanner('✦ YOLO ✦','yolo-r');
-      showMsg((turnPhase==='player'?'Spieler 1':'Spieler 2')+': YOLO! Alle 3 Karten!');
+      showMsg((turnPhase==='player'?t('player1'):t('player2'))+': '+t('yoloAllCards'));
       playYolo();
       table.forEach(card=>{ if(card) placeCard(activeTab, card); });
       checkSofortBonuses(activeWho);
@@ -2135,8 +2338,8 @@ function checkPlayerResultAfterDia(){
 
     // No match
     playMiss();
-    showBanner('Kein Treffer', '', 'var(--muted)');
-    showMsg('Diamant verbraucht – nächster Spieler');
+    showBanner(t('noHit'), '', 'var(--muted)');
+    showMsg(t('diaSpent'));
     setTimeout(endFn, 700);
 
   } catch(e) {
@@ -2177,7 +2380,7 @@ function showCardChoicePopup(matches, targetTableau, targetWho, canKeepRolling){
   pendingMatches = matches;
   pendingTarget = {targetTableau, targetWho};
 
-  title.textContent = matches.length > 1 ? 'Welche Karte nehmen?' : matches[0].card.pts + ' Punkte nehmen?';
+  title.textContent = matches.length > 1 ? t('whichCard') : t('cardTake', matches[0].card.pts);
   title.style.color = 'var(--text)';
   title.style.textShadow = '';
 
@@ -2186,7 +2389,7 @@ function showCardChoicePopup(matches, targetTableau, targetWho, canKeepRolling){
   matches.forEach(({card, i}) => {
     const btn = document.createElement('button');
     btn.className = 'btn-take-card' + (isP1 ? ' p1-color' : '');
-    const colorLabel = {red:'Rot',yellow:'Gelb',blue:'Blau',white:'Weiß'}[card.color] || card.color;
+    const colorLabel = t('colorLabel')[card.color] || card.color;
     btn.textContent = '✓ ' + colorLabel + ' · ' + card.pts + ' Pts';
     if(!isP1) btn.style.background = 'linear-gradient(135deg,var(--violet),var(--pink))';
     btn.onclick = () => takeCardChoice(i);
@@ -2196,7 +2399,7 @@ function showCardChoicePopup(matches, targetTableau, targetWho, canKeepRolling){
   if(canKeepRolling){
     const rollBtn = document.createElement('button');
     rollBtn.className = 'btn-keep-rolling';
-    rollBtn.textContent = 'Nochmal würfeln →';
+    rollBtn.textContent = t('keepRolling');
     rollBtn.onclick = keepRollingChoice;
     btnsEl.appendChild(rollBtn);
   }
@@ -2276,6 +2479,74 @@ function keepRollingChoice(){
 
 
 
+
+
+function applyLang(){
+  // Static HTML elements
+  const el = (id) => document.getElementById(id);
+  if(el('p1Name')) el('p1Name').textContent = t('player1');
+  if(el('p2Name')) el('p2Name').textContent = t('player2');
+  if(el('bonusAreaTitle')) el('bonusAreaTitle').textContent = t('bonuses');
+  if(el('diceHint')) el('diceHint').textContent = t('holdHint');
+  if(el('btnRoll')) el('btnRoll').textContent = t('roll');
+  if(el('btnNewGame')) el('btnNewGame').textContent = t('newGame');
+  if(el('yoloSub')) el('yoloSub').textContent = t('allThreeCards');
+  if(el('diaPopupTitle')) el('diaPopupTitle').textContent = '◆ ' + t('whichDie').replace('◆ ','');
+  if(el('btnDiaConfirm')) el('btnDiaConfirm').textContent = t('reroll');
+  if(el('btnEndTurnDia')) el('btnEndTurnDia').textContent = t('endTurn');
+  // Splash play button
+  const splashBtn = document.querySelector('#splashScreen .glass-btn');
+  if(splashBtn) splashBtn.textContent = t('play');
+  // Rebuild bonuses if already rendered
+  if(typeof BONUSES !== 'undefined' && BONUSES && BONUSES.length) renderBonuses();
+  // Update tutorial text if visible
+  applyLangTutorial();
+}
+
+function applyLangTutorial(){
+  const tut = (I18N[lang]||I18N.de).tut;
+  if(!tut) return;
+  const el = (id) => document.getElementById(id);
+  // Page 1
+  if(el('tutP1Title')) el('tutP1Title').textContent = tut.p1title;
+  if(el('tutGoalTitle')) el('tutGoalTitle').textContent = tut.goal;
+  if(el('tutGoalText')) el('tutGoalText').innerHTML = tut.goalText;
+  if(el('tutAuslageTitle')) el('tutAuslageTitle').textContent = tut.auslage;
+  if(el('tutAuslageText')) el('tutAuslageText').textContent = tut.auslageText;
+  if(el('tutNext1')) el('tutNext1').textContent = tut.next;
+  if(el('tutSkip1')) el('tutSkip1').textContent = tut.skip;
+  // Page 2
+  if(el('tutP2Title')) el('tutP2Title').textContent = tut.p2title;
+  if(el('tutDiceTitle')) el('tutDiceTitle').textContent = tut.diceTitle;
+  if(el('tutTurnTitle')) el('tutTurnTitle').textContent = tut.turnTitle;
+  if(el('tutStep1')) el('tutStep1').innerHTML = tut.step1;
+  if(el('tutStep2')) el('tutStep2').textContent = tut.step2;
+  if(el('tutStep3')) el('tutStep3').innerHTML = tut.step3;
+  if(el('tutNext2')) el('tutNext2').textContent = tut.next;
+  if(el('tutSkip2')) el('tutSkip2').textContent = tut.skip;
+  // Page 3
+  if(el('tutP3Title')) el('tutP3Title').textContent = tut.p3title;
+  if(el('tutScoreText')) el('tutScoreText').innerHTML = tut.scoreTitle;
+  if(el('tutWhiteJoker')) el('tutWhiteJoker').textContent = tut.whiteJoker;
+  if(el('tutYoloTitle')) el('tutYoloTitle').textContent = tut.yoloTitle;
+  if(el('tutYoloText')) el('tutYoloText').innerHTML = tut.yoloText;
+  if(el('tutBonusTitle')) el('tutBonusTitle').textContent = tut.bonusTitle;
+  if(el('tutBonusText')) el('tutBonusText').textContent = tut.bonusText;
+  if(el('tutStart')) el('tutStart').textContent = tut.start;
+}
+
+function setLang(newLang){
+  lang = newLang;
+  document.documentElement.lang = newLang;
+  // Update lang button active states
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.style.background = b.dataset.lang === newLang
+      ? 'rgba(255,255,255,.45)'
+      : 'rgba(255,255,255,.15)';
+    b.style.fontWeight = b.dataset.lang === newLang ? '700' : '400';
+  });
+  applyLang();
+}
 
 function showModeScreen(){
   document.getElementById('gameOverModal').classList.remove('show');
