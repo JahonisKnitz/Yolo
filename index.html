@@ -848,7 +848,7 @@ body{
         <div class="yolo-dice">
           <div class="md ltr ltr-Y">Y</div><div class="md ltr ltr-O">O</div><div class="md ltr ltr-L">L</div><div class="md ltr ltr-O">O</div>
         </div>
-        <div id="deckInfo" style="display:flex;align-items:center;gap:3px;font-family:'Bebas Neue',sans-serif;font-size:13px;color:rgba(255,255,255,.75);margin-left:6px;padding-left:6px;border-left:1px solid rgba(255,255,255,.3);">38 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="2" width="14" height="18" rx="2" stroke="currentColor" stroke-width="2"/><rect x="7" y="6" width="14" height="18" rx="2" fill="var(--bg)" stroke="currentColor" stroke-width="2"/></svg></div>
+        <div id="deckInfo" style="display:flex;align-items:center;gap:3px;font-family:'Bebas Neue',sans-serif;font-size:13px;color:rgba(255,255,255,.75);margin-left:6px;padding-left:6px;border-left:1px solid rgba(255,255,255,.3);">41 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="2" width="14" height="18" rx="2" stroke="currentColor" stroke-width="2"/><rect x="7" y="6" width="14" height="18" rx="2" fill="var(--bg)" stroke="currentColor" stroke-width="2"/></svg></div>
       </div>
     </div>
     <!-- DICE -->
@@ -942,7 +942,7 @@ const I18N = {
     sofortBonus: (who, desc, pts) => `${who} kassiert Sofortbonus: ${desc} (+${pts} Pts)!`,
     youLabel: 'Du', cpuLabel: 'CPU',
     completeRows: (n) => `${n} vollst. Zeilen`,
-    diaRows: (n) => ` (inkl. ${n} Zeile${n>1?'n':''} per ◆)`,
+    diaRows: (n) => ` (inkl. ${n} unvollst. Reihe per ◆)`,
     tableauPts: 'Tableau-Punkte',
     bonusPts: 'Bonuspunkte',
     whiteCardTitle: 'Weiße Karte (Joker)',
@@ -957,8 +957,8 @@ const I18N = {
       next:'WEITER →', skip:'Überspringen', start:"LOS GEHT'S! 🎲",
       diceTitle:'6 SEITEN – 4 WÜRFEL', turnTitle:'🎲 DEIN ZUG',
       step1:'Würfle bis zu <b>3 Mal</b>. Halte Würfel zwischen den Würfen fest.',
-      step2:'Treffe die Kombination einer Karte → Karte nehmen!',
-      step3:'◆ bei Fehlwürfen → Diamanten sammeln → Extra-Würfe!',
+      step2:'Treffe die Kombination einer Karte → Karte nehmen! Keine Karte genommen? Dann fliegt die höchste Karte aus der Auslage (bei Gleichstand: weiß, dann links).',
+      step3:'◆ bei Fehlwürfen → Diamanten sammeln → Extra-Würfe! Wer am Ende die meisten ◆ hat, wertet eine unvollständige Reihe.',
       scoreTitle:'Karten kommen in Spalten (Rot, Gelb, Blau). Jede vollständige <b>Zeile</b> aus 3 Farben bringt Punkte:',
       whiteJoker:'Weiße Karten sind Joker – passen in jede Spalte!',
       yoloTitle:'✦ YOLO!', yoloText:'Würfelst du <b>Y·O·L·O</b> mit allen 4 Würfeln? Alle 3 Karten auf einmal!',
@@ -967,8 +967,9 @@ const I18N = {
     bonusDescs: {
       S1:'5 Karten mit 2-Würfel-Kombi', S2:'Spalte aus 5 Karten', S3:'3 weiße Karten im Tableau',
       S4:'3 Karten unter 4 Punkten', S5:'4 gelbe Karten', S6:'Vollständige Zeile ohne weiße Karte',
-      S7:'2 Karten mit 8 oder 9 Punkten', S8:'Karten aller 4 Farben im Tableau',
-      S9:'6 Karten im Tableau', S10:'Straße: 5 aufeinanderfolgende Punktwerte', S11:'Spalte aus 4 Karten',
+      S7:'Je eine Karte mit 5 und 7 Punkten', S8:'Karten aller 4 Farben im Tableau',
+      S9:'6 Karten im Tableau', S10:'Karten mit 2, 3, 4 und 5 Punkten', S11:'Spalte aus 4 Karten',
+      S12:'3 blaue Karten',
       L1:'Meiste gelbe Karten', L2:'Längste Spalte am Spielende', L3:'Meiste blaue Karten',
       L4:'Meiste rote Karten', L5:'Meiste Karten mit 2 oder 3 Punkten'
     }
@@ -1003,7 +1004,7 @@ const I18N = {
     sofortBonus: (who, desc, pts) => `${who} verdient directe bonus: ${desc} (+${pts} Pts)!`,
     youLabel: 'Jij', cpuLabel: 'CPU',
     completeRows: (n) => `${n} volledige rij${n>1?'en':''}`,
-    diaRows: (n) => ` (incl. ${n} rij${n>1?'en':''} via ◆)`,
+    diaRows: (n) => ` (incl. ${n} onvolledige rij via ◆)`,
     tableauPts: 'Tableau-punten',
     bonusPts: 'Bonuspunten',
     whiteCardTitle: 'Witte kaart (joker)',
@@ -1018,8 +1019,8 @@ const I18N = {
       next:'VOLGENDE →', skip:'Overslaan', start:'LOS! 🎲',
       diceTitle:'6 KANTEN – 4 DOBBELSTENEN', turnTitle:'🎲 JOUW BEURT',
       step1:'Gooi tot <b>3 keer</b>. Houd dobbelstenen vast tussen de worpen.',
-      step2:'Raak de combinatie van een kaart → kaart nemen!',
-      step3:'◆ bij misworpen → diamanten verzamelen → Extra worpen!',
+      step2:'Raak de combinatie van een kaart → kaart nemen! Geen kaart genomen? Dan verdwijnt de hoogste kaart uit de uitleg (bij gelijkstand: wit, dan links).',
+      step3:'◆ bij misworpen → diamanten verzamelen → Extra worpen! Wie aan het einde de meeste ◆ heeft, telt een onvolledige rij mee.',
       scoreTitle:'Kaarten komen in kolommen (Rood, Geel, Blauw). Elke complete <b>rij</b> van 3 kleuren geeft punten:',
       whiteJoker:'Witte kaarten zijn jokers – passen in elke kolom!',
       yoloTitle:'✦ YOLO!', yoloText:'Gooi je <b>Y·O·L·O</b> met alle 4 dobbelstenen? Alle 3 kaarten tegelijk!',
@@ -1028,8 +1029,9 @@ const I18N = {
     bonusDescs: {
       S1:'5 kaarten met 2-dobbelsteen-combo', S2:'Kolom van 5 kaarten', S3:'3 witte kaarten in tableau',
       S4:'3 kaarten onder 4 punten', S5:'4 gele kaarten', S6:'Volledige rij zonder witte kaart',
-      S7:'2 kaarten met 8 of 9 punten', S8:'Kaarten van alle 4 kleuren in tableau',
-      S9:'6 kaarten in tableau', S10:'Straat: 5 opeenvolgende puntwaarden', S11:'Kolom van 4 kaarten',
+      S7:'Een kaart met 5 en een kaart met 7 punten', S8:'Kaarten van alle 4 kleuren in tableau',
+      S9:'6 kaarten in tableau', S10:'Kaarten met 2, 3, 4 en 5 punten', S11:'Kolom van 4 kaarten',
+      S12:'3 blauwe kaarten',
       L1:'Meeste gele kaarten', L2:'Langste kolom aan het einde', L3:'Meeste blauwe kaarten',
       L4:'Meeste rode kaarten', L5:'Meeste kaarten met 2 of 3 punten'
     }
@@ -1064,7 +1066,7 @@ const I18N = {
     sofortBonus: (who, desc, pts) => `${who} earns instant bonus: ${desc} (+${pts} Pts)!`,
     youLabel: 'You', cpuLabel: 'CPU',
     completeRows: (n) => `${n} complete row${n>1?'s':''}`,
-    diaRows: (n) => ` (incl. ${n} row${n>1?'s':''} via ◆)`,
+    diaRows: (n) => ` (incl. ${n} incomplete row via ◆)`,
     tableauPts: 'Tableau points',
     bonusPts: 'Bonus points',
     whiteCardTitle: 'White card (joker)',
@@ -1079,8 +1081,8 @@ const I18N = {
       next:'NEXT →', skip:'Skip', start:"LET'S GO! 🎲",
       diceTitle:'6 SIDES – 4 DICE', turnTitle:'🎲 YOUR TURN',
       step1:'Roll up to <b>3 times</b>. Hold dice between rolls.',
-      step2:'Match the combination on a card → take the card!',
-      step3:'◆ on misses → collect diamonds → Extra rolls!',
+      step2:'Match the combination on a card → take the card! No card taken? The highest card leaves the display (ties: white, then leftmost).',
+      step3:'◆ on misses → collect diamonds → Extra rolls! Most ◆ at the end scores one incomplete row.',
       scoreTitle:'Cards come in columns (Red, Yellow, Blue). Each complete <b>row</b> of 3 colors scores points:',
       whiteJoker:'White cards are jokers – they fit in any column!',
       yoloTitle:'✦ YOLO!', yoloText:'Roll <b>Y·O·L·O</b> with all 4 dice? All 3 cards at once!',
@@ -1089,8 +1091,9 @@ const I18N = {
     bonusDescs: {
       S1:'5 cards with 2-die combo', S2:'Column of 5 cards', S3:'3 white cards in tableau',
       S4:'3 cards under 4 points', S5:'4 yellow cards', S6:'Complete row without white card',
-      S7:'2 cards with 8 or 9 points', S8:'Cards of all 4 colors in tableau',
-      S9:'6 cards in tableau', S10:'Straight: 5 consecutive point values', S11:'Column of 4 cards',
+      S7:'One card with 5 and one with 7 points', S8:'Cards of all 4 colors in tableau',
+      S9:'6 cards in tableau', S10:'Cards with 2, 3, 4 and 5 points', S11:'Column of 4 cards',
+      S12:'3 blue cards',
       L1:'Most yellow cards', L2:'Longest column at game end', L3:'Most blue cards',
       L4:'Most red cards', L5:'Most cards with 2 or 3 points'
     }
@@ -1186,36 +1189,46 @@ const DIA_SVG_SM = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
 const FACES = ['Y','L','O','◆','P','V'];
 const COLORS_HEX = {red:'#e03020',yellow:'#d4930a',blue:'#2a5ae8',white:'#999'};
 
+// Kartenverteilung laut Druckvorlage (Yolo.pdf): 3×10 Farbkarten + 8 weiße Joker = 38 Karten, dazu 3 Einser-Karten (Prototyp) = 41
+// P = Pink, V = Violett, ◆ = Diamant, Y/L/O = Buchstaben
 const COMBOS = {
-  r2:['P','Y'],y2:['P','L'],b2:['P','O'],
-  r3:['P','Y','L'],y3:['P','Y','O'],b3:['P','L','O'],
-  c4:['P','V'],
-  r5:['P','V','Y'],y5:['P','V','L'],b5:['P','V','O'],
-  r6:['◆','P'],y6:['◆','V'],b6:['◆','P'],
-  c7:['◆','P','V'],
-  r7b:['◆','P','Y'],y7b:['◆','P','L'],b7b:['◆','P','O'],
-  c9:['◆','◆','◆'],
-  w2:['V','Y','L'],w3:['V','Y','O'],w4:['P','V','Y'],
-  w5:['P','V','L'],w6:['P','V','O'],w7:['◆','V','Y'],
-  w8:['◆','P','Y'],w9:['◆','◆','◆'],
+  // 2 Punkte (2 Symbole)
+  r2:['P','Y'], y2:['P','L'], b2:['P','O'],
+  // 3 Punkte (2 Symbole, in allen drei Farben gleich)
+  c3:['P','V'],
+  // 4 Punkte (3 Symbole)
+  r4:['P','L','Y'], y4:['Y','P','O'], b4:['P','L','O'],
+  // 5 Punkte (3 Symbole, teils mit ◆)
+  r5a:['P','V','Y'], r5b:['◆','V','P'], r5c:['◆','Y','P'],
+  y5a:['P','V','L'], y5b:['◆','V','P'],
+  b5a:['P','V','O'], b5b:['◆','P','O'],
+  // 7 Punkte (◆◆◆, in allen drei Farben gleich)
+  c7:['◆','◆','◆'],
+  // 1 Punkt (nur 1 Würfel nötig, Lückenfüller)
+  r1:['Y'], y1:['L'], b1:['O'],
+  // Weiße Joker
+  w2:['Y','V','L'], w3:['Y','V','O'], w4:['P','V','Y'],
+  w5:['P','V','L'], w6:['P','V','◆'], w7:['◆','P','◆'],
+  w8:['◆','V','◆'], w9:['◆','◆','◆'],
 };
 
 const CARD_POOL = [
   {color:'red',pts:2,combo:'r2'},{color:'red',pts:2,combo:'r2'},
-  {color:'red',pts:3,combo:'r3'},{color:'red',pts:3,combo:'r3'},
-  {color:'red',pts:4,combo:'c4'},{color:'red',pts:5,combo:'r5'},
-  {color:'red',pts:6,combo:'r6'},{color:'red',pts:7,combo:'c7'},
-  {color:'red',pts:7,combo:'r7b'},{color:'red',pts:9,combo:'c9'},
+  {color:'red',pts:3,combo:'c3'},{color:'red',pts:3,combo:'c3'},
+  {color:'red',pts:4,combo:'r4'},{color:'red',pts:4,combo:'r4'},
+  {color:'red',pts:5,combo:'r5a'},{color:'red',pts:5,combo:'r5b'},
+  {color:'red',pts:5,combo:'r5c'},{color:'red',pts:7,combo:'c7'},
   {color:'yellow',pts:2,combo:'y2'},{color:'yellow',pts:2,combo:'y2'},
-  {color:'yellow',pts:3,combo:'y3'},{color:'yellow',pts:3,combo:'y3'},
-  {color:'yellow',pts:4,combo:'c4'},{color:'yellow',pts:5,combo:'y5'},
-  {color:'yellow',pts:6,combo:'y6'},{color:'yellow',pts:7,combo:'c7'},
-  {color:'yellow',pts:7,combo:'y7b'},{color:'yellow',pts:9,combo:'c9'},
+  {color:'yellow',pts:3,combo:'c3'},{color:'yellow',pts:3,combo:'c3'},
+  {color:'yellow',pts:4,combo:'y4'},{color:'yellow',pts:4,combo:'y4'},
+  {color:'yellow',pts:5,combo:'y5a'},{color:'yellow',pts:5,combo:'y5b'},
+  {color:'yellow',pts:5,combo:'y5b'},{color:'yellow',pts:7,combo:'c7'},
   {color:'blue',pts:2,combo:'b2'},{color:'blue',pts:2,combo:'b2'},
-  {color:'blue',pts:3,combo:'b3'},{color:'blue',pts:3,combo:'b3'},
-  {color:'blue',pts:4,combo:'c4'},{color:'blue',pts:5,combo:'b5'},
-  {color:'blue',pts:6,combo:'b6'},{color:'blue',pts:7,combo:'c7'},
-  {color:'blue',pts:7,combo:'b7b'},{color:'blue',pts:9,combo:'c9'},
+  {color:'blue',pts:3,combo:'c3'},{color:'blue',pts:3,combo:'c3'},
+  {color:'blue',pts:4,combo:'b4'},{color:'blue',pts:4,combo:'b4'},
+  {color:'blue',pts:5,combo:'b5a'},{color:'blue',pts:5,combo:'b5b'},
+  {color:'blue',pts:5,combo:'b5b'},{color:'blue',pts:7,combo:'c7'},
+  {color:'red',pts:1,combo:'r1'},{color:'yellow',pts:1,combo:'y1'},{color:'blue',pts:1,combo:'b1'},
   {color:'white',pts:2,combo:'w2'},{color:'white',pts:3,combo:'w3'},
   {color:'white',pts:4,combo:'w4'},{color:'white',pts:5,combo:'w5'},
   {color:'white',pts:6,combo:'w6'},{color:'white',pts:7,combo:'w7'},
@@ -1223,17 +1236,18 @@ const CARD_POOL = [
 ];
 
 const ALL_SOFORT = [
-  {id:'S1', type:'sofort', pts:5},
+  {id:'S1', type:'sofort', pts:6},
   {id:'S2', type:'sofort', pts:8},
-  {id:'S3', type:'sofort', pts:4},
+  {id:'S3', type:'sofort', pts:6},
   {id:'S4', type:'sofort', pts:6},
   {id:'S5', type:'sofort', pts:7},
   {id:'S6', type:'sofort', pts:7},
   {id:'S7', type:'sofort', pts:8},
-  {id:'S8', type:'sofort', pts:6},
-  {id:'S9', type:'sofort', pts:7},
+  {id:'S8', type:'sofort', pts:9},
+  {id:'S9', type:'sofort', pts:9},
   {id:'S10',type:'sofort', pts:8},
   {id:'S11',type:'sofort', pts:7},
+  {id:'S12',type:'sofort', pts:7},
 ];
 
 const ALL_LANGZEIT = [
@@ -1259,6 +1273,7 @@ let bonusState={}; // {id: 'you'|'cpu'|null}
 let diamondPool=10, youDiamonds=0, cpuDiamonds=0, diaEarnedThisTurn=0;
 let youDiaRows=0, cpuDiaRows=0; // rows unlocked with diamonds
 let gameMode='human';
+let cardTakenThisTurn=false;
 
 function rnd(arr){return arr[Math.floor(Math.random()*arr.length)];}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -1282,10 +1297,9 @@ function isYolo(diceArr){return [...diceArr].sort().join('')==='LOOY';}
 function checkBonus(bonusId, tableau){
   const cols=['red','yellow','blue'];
   const all=cols.flatMap(c=>tableau[c]||[]);
-  const twoDidCombos=new Set(['r2','y2','b2','c4','r6','y6','b6']);
   const maxCol=()=>Math.max(0,...cols.map(c=>(tableau[c]||[]).length));
 
-  if(bonusId==='S1') return all.filter(c=>twoDidCombos.has(c.combo)).length>=5;
+  if(bonusId==='S1') return all.filter(c=>COMBOS[c.combo].length===2).length>=5;
   if(bonusId==='S2') return maxCol()>=5;
   if(bonusId==='S3') return all.filter(c=>c.color==='white').length>=3;
   if(bonusId==='S4') return all.filter(c=>c.pts<4).length>=3;
@@ -1299,15 +1313,12 @@ function checkBonus(bonusId, tableau){
     }
     return false;
   }
-  if(bonusId==='S7') return all.filter(c=>c.pts>=8).length>=2;
+  if(bonusId==='S7') return [5,7].every(p=>all.some(c=>c.pts===p));
   if(bonusId==='S8') return ['red','yellow','blue','white'].every(col=>all.some(c=>c.color===col));
   if(bonusId==='S9') return all.length>=6;
-  if(bonusId==='S10'){
-    const pts=new Set(all.map(c=>c.pts));
-    for(let s=2;s<=5;s++) if([0,1,2,3,4].every(i=>pts.has(s+i))) return true;
-    return false;
-  }
+  if(bonusId==='S10') return [2,3,4,5].every(p=>all.some(c=>c.pts===p));
   if(bonusId==='S11') return maxCol()>=4;
+  if(bonusId==='S12') return all.filter(c=>c.color==='blue').length>=3;
   if(bonusId==='L1') return all.filter(c=>c.color==='yellow').length;
   if(bonusId==='L2') return maxCol();
   if(bonusId==='L3') return all.filter(c=>c.color==='blue').length;
@@ -1868,7 +1879,26 @@ function endPlayerTurn(wasYolo){
   if(ys) ys.classList.remove('matched');
   dice=dice.map(d=>({face:d.face,held:false}));
   attempts=0;
- 
+
+  // Kein Treffer in diesem Zug: eine Auslage-Karte wird automatisch entfernt
+  // Reihenfolge: 1. höchster Wert, 2. weiße Karte, 3. von links nach rechts
+  let removeIdx=-1;
+  if(!wasYolo && !cardTakenThisTurn){
+    let best=null;
+    table.forEach((c,i)=>{
+      if(!c) return;
+      if(best===null){best=i;return;}
+      const b=table[best];
+      if(c.pts>b.pts || (c.pts===b.pts && c.color==='white' && b.color!=='white')) best=i;
+    });
+    if(best!==null){
+      removeIdx=best;
+      const els=document.querySelectorAll('#cardsRow .card');
+      if(els[removeIdx]) els[removeIdx].classList.add('puff-out');
+    }
+  }
+  cardTakenThisTurn=false;
+
   turnPhase=(turnPhase==='player')?'cpu':'player';
   updateTurnBadge();
   renderDice();
@@ -1890,6 +1920,7 @@ function endPlayerTurn(wasYolo){
         newTableSlots=new Set([0,1,2]);
       } else {table=[];checkGameEnd();return;}
     } else {
+      if(removeIdx>=0) table[removeIdx]=null;
       for(let i=0;i<table.length;i++){
         if(table[i]===null){
           table[i]=deck.length>0?deck.pop():null;
@@ -2349,22 +2380,23 @@ function checkPlayerResultAfterDia(){
   }
 }
 
-// Score tableau with diamond-unlocked rows
+// Endwertung Diamanten: Wer die meisten ◆ hat (mind. 1), wertet zusätzlich seine beste
+// unvollständige Reihe. Bei Gleichstand dürfen alle Gleichauf-Spieler das.
 function scoreTableauWithDia(tableau, diamonds, trackFor){
   const cols=['red','yellow','blue'];
   const maxR=Math.max(0,...cols.map(c=>(tableau[c]||[]).length));
-  let total=0, diasLeft=Math.floor(diamonds/3), rowsUnlocked=0;
-  for(let r=0;r<maxR;r++){
-    const row=cols.map(c=>(tableau[c]||[])[r]).filter(Boolean);
-    if(row.length===3) total+=row.reduce((s,c)=>s+c.pts,0);
-    else if(row.length===2&&diasLeft>0){
-      diasLeft--;
-      rowsUnlocked++;
-      total+=row.reduce((s,c)=>s+c.pts,0);
+  let total=scoreTableau(tableau), rows=0;
+  const mx=Math.max(youDiamonds,cpuDiamonds);
+  if(mx>=1 && diamonds===mx){
+    let best=0;
+    for(let r=0;r<maxR;r++){
+      const row=cols.map(c=>(tableau[c]||[])[r]).filter(Boolean);
+      if(row.length<3) best=Math.max(best,row.reduce((s,c)=>s+c.pts,0));
     }
+    if(best>0){ total+=best; rows=1; }
   }
-  if(trackFor==='you') youDiaRows=rowsUnlocked;
-  if(trackFor==='cpu') cpuDiaRows=rowsUnlocked;
+  if(trackFor==='you') youDiaRows=rows;
+  if(trackFor==='cpu') cpuDiaRows=rows;
   return total;
 }
 
@@ -2447,6 +2479,7 @@ function takeCardChoice(cardIdx){
   const {card} = match;
   const {targetTableau, targetWho} = pendingTarget;
   hideCardChoicePopup();
+  cardTakenThisTurn=true;
   document.getElementById('btnRoll').disabled = true;
 
   const cardEls = document.querySelectorAll('.card');
