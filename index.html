@@ -965,13 +965,8 @@ const I18N = {
       bonusTitle:'★ BONUSAUFTRÄGE', bonusText:'Sofort-Boni: sofort kassieren. Langzeit-Boni: am Ende gewinnt, wer mehr hat!'
     },
     bonusDescs: {
-      S1:'5 Karten mit 2-Würfel-Kombi', S2:'Spalte aus 5 Karten', S3:'3 weiße Karten im Tableau',
-      S4:'3 Karten unter 4 Punkten', S5:'4 gelbe Karten', S6:'Vollständige Zeile ohne weiße Karte',
-      S7:'Je eine Karte mit 5 und 7 Punkten', S8:'Karten aller 4 Farben im Tableau',
-      S9:'6 Karten im Tableau', S10:'Karten mit 2, 3, 4 und 5 Punkten', S11:'Spalte aus 4 Karten',
-      S12:'3 blaue Karten',
-      L1:'Meiste gelbe Karten', L2:'Längste Spalte am Spielende', L3:'Meiste blaue Karten',
-      L4:'Meiste rote Karten', L5:'Meiste Karten mit 2 oder 3 Punkten'
+      S1:"5 Karten mit 2-Würfel-Kombi", S2:"Spalte aus 5 Karten", S3:"3 weiße Karten im Tableau", S4:"4 gelbe Karten", S5:"Vollständige Zeile ohne weiße Karte", S6:"3 blaue Karten", S7:"Spalte aus 4 Karten", S8:"Karten aller 4 Farben im Tableau", S9:"6 Karten im Tableau", S10:"Karten mit 2, 3, 4 und 5 Punkten",
+      L1:"Meiste gelbe Karten", L2:"Längste Spalte am Spielende", L3:"Meiste blaue Karten", L4:"Meiste rote Karten"
     }
   },
   nl: {
@@ -1027,13 +1022,8 @@ const I18N = {
       bonusTitle:'★ BONUSOPDRACHTEN', bonusText:'Directe bonussen: direct ontvangen. Einddoelen: aan het einde wint wie meer heeft!'
     },
     bonusDescs: {
-      S1:'5 kaarten met 2-dobbelsteen-combo', S2:'Kolom van 5 kaarten', S3:'3 witte kaarten in tableau',
-      S4:'3 kaarten onder 4 punten', S5:'4 gele kaarten', S6:'Volledige rij zonder witte kaart',
-      S7:'Een kaart met 5 en een kaart met 7 punten', S8:'Kaarten van alle 4 kleuren in tableau',
-      S9:'6 kaarten in tableau', S10:'Kaarten met 2, 3, 4 en 5 punten', S11:'Kolom van 4 kaarten',
-      S12:'3 blauwe kaarten',
-      L1:'Meeste gele kaarten', L2:'Langste kolom aan het einde', L3:'Meeste blauwe kaarten',
-      L4:'Meeste rode kaarten', L5:'Meeste kaarten met 2 of 3 punten'
+      S1:"5 kaarten met 2-dobbelsteen-combo", S2:"Kolom van 5 kaarten", S3:"3 witte kaarten in tableau", S4:"4 gele kaarten", S5:"Volledige rij zonder witte kaart", S6:"3 blauwe kaarten", S7:"Kolom van 4 kaarten", S8:"Kaarten van alle 4 kleuren in tableau", S9:"6 kaarten in tableau", S10:"Kaarten met 2, 3, 4 en 5 punten",
+      L1:"Meeste gele kaarten", L2:"Langste kolom aan het einde", L3:"Meeste blauwe kaarten", L4:"Meeste rode kaarten"
     }
   },
   en: {
@@ -1089,13 +1079,8 @@ const I18N = {
       bonusTitle:'★ BONUS MISSIONS', bonusText:'Instant bonuses: collect right away. End goals: most at the end wins!'
     },
     bonusDescs: {
-      S1:'5 cards with 2-die combo', S2:'Column of 5 cards', S3:'3 white cards in tableau',
-      S4:'3 cards under 4 points', S5:'4 yellow cards', S6:'Complete row without white card',
-      S7:'One card with 5 and one with 7 points', S8:'Cards of all 4 colors in tableau',
-      S9:'6 cards in tableau', S10:'Cards with 2, 3, 4 and 5 points', S11:'Column of 4 cards',
-      S12:'3 blue cards',
-      L1:'Most yellow cards', L2:'Longest column at game end', L3:'Most blue cards',
-      L4:'Most red cards', L5:'Most cards with 2 or 3 points'
+      S1:"5 cards with 2-die combo", S2:"Column of 5 cards", S3:"3 white cards in tableau", S4:"4 yellow cards", S5:"Complete row without white card", S6:"3 blue cards", S7:"Column of 4 cards", S8:"Cards of all 4 colors in tableau", S9:"6 cards in tableau", S10:"Cards with 2, 3, 4 and 5 points",
+      L1:"Most yellow cards", L2:"Longest column at game end", L3:"Most blue cards", L4:"Most red cards"
     }
   }
 };
@@ -1189,65 +1174,49 @@ const DIA_SVG_SM = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
 const FACES = ['Y','L','O','◆','P','V'];
 const COLORS_HEX = {red:'#e03020',yellow:'#d4930a',blue:'#2a5ae8',white:'#999'};
 
-// Kartenverteilung laut Druckvorlage (Yolo.pdf): 3×10 Farbkarten + 8 weiße Joker = 38 Karten, dazu 3 Einser-Karten (Prototyp) = 41
+// Kartenverteilung laut Druckvorlage Yolo_V5_Front.pdf: 3×11 Farbkarten + 8 weiße Joker = 41 Zahlenkarten
 // P = Pink, V = Violett, ◆ = Diamant, Y/L/O = Buchstaben
 const COMBOS = {
-  // 2 Punkte (2 Symbole)
-  r2:['P','Y'], y2:['P','L'], b2:['P','O'],
-  // 3 Punkte (2 Symbole, in allen drei Farben gleich)
-  c3:['P','V'],
-  // 4 Punkte (3 Symbole)
-  r4:['P','L','Y'], y4:['Y','P','O'], b4:['P','L','O'],
-  // 5 Punkte (3 Symbole, teils mit ◆)
-  r5a:['P','V','Y'], r5b:['◆','V','P'], r5c:['◆','Y','P'],
-  y5a:['P','V','L'], y5b:['◆','V','P'],
-  b5a:['P','V','O'], b5b:['◆','P','O'],
-  // 7 Punkte (◆◆◆, in allen drei Farben gleich)
-  c7:['◆','◆','◆'],
   // 1 Punkt (nur 1 Würfel nötig, Lückenfüller)
   r1:['Y'], y1:['L'], b1:['O'],
-  // Weiße Joker
-  w2:['Y','V','L'], w3:['Y','V','O'], w4:['P','V','Y'],
-  w5:['P','V','L'], w6:['P','V','◆'], w7:['◆','P','◆'],
-  w8:['◆','V','◆'], w9:['◆','◆','◆'],
+  // 2 Punkte
+  r2:['P','Y'], y2:['P','L'], b2:['P','O'],
+  // 3 Punkte (in allen drei Farben gleich)
+  c3:['P','V'],
+  // 4 Punkte
+  r4:['P','L','Y'], y4:['Y','P','O'], b4:['P','L','O'],
+  // 5 Punkte
+  r5:['◆','Y','P'], y5:['◆','V','P'], b5:['◆','P','O'],
+  // 7 Punkte (◆◆◆, in allen drei Farben gleich)
+  c7:['◆','◆','◆'],
+  // Weiße Joker: dreimal dasselbe Symbol
+  w2:['V','V','V'], w3:['V','V','V'], w4:['P','P','P'],
+  w5:['P','P','P'], w6:['L','L','L'], w7:['Y','Y','Y'],
+  w8:['O','O','O'], w9:['◆','◆','◆'],
 };
 
-const CARD_POOL = [
-  {color:'red',pts:2,combo:'r2'},{color:'red',pts:2,combo:'r2'},
-  {color:'red',pts:3,combo:'c3'},{color:'red',pts:3,combo:'c3'},
-  {color:'red',pts:4,combo:'r4'},{color:'red',pts:4,combo:'r4'},
-  {color:'red',pts:5,combo:'r5a'},{color:'red',pts:5,combo:'r5b'},
-  {color:'red',pts:5,combo:'r5c'},{color:'red',pts:7,combo:'c7'},
-  {color:'yellow',pts:2,combo:'y2'},{color:'yellow',pts:2,combo:'y2'},
-  {color:'yellow',pts:3,combo:'c3'},{color:'yellow',pts:3,combo:'c3'},
-  {color:'yellow',pts:4,combo:'y4'},{color:'yellow',pts:4,combo:'y4'},
-  {color:'yellow',pts:5,combo:'y5a'},{color:'yellow',pts:5,combo:'y5b'},
-  {color:'yellow',pts:5,combo:'y5b'},{color:'yellow',pts:7,combo:'c7'},
-  {color:'blue',pts:2,combo:'b2'},{color:'blue',pts:2,combo:'b2'},
-  {color:'blue',pts:3,combo:'c3'},{color:'blue',pts:3,combo:'c3'},
-  {color:'blue',pts:4,combo:'b4'},{color:'blue',pts:4,combo:'b4'},
-  {color:'blue',pts:5,combo:'b5a'},{color:'blue',pts:5,combo:'b5b'},
-  {color:'blue',pts:5,combo:'b5b'},{color:'blue',pts:7,combo:'c7'},
-  {color:'red',pts:1,combo:'r1'},{color:'yellow',pts:1,combo:'y1'},{color:'blue',pts:1,combo:'b1'},
-  {color:'white',pts:2,combo:'w2'},{color:'white',pts:3,combo:'w3'},
-  {color:'white',pts:4,combo:'w4'},{color:'white',pts:5,combo:'w5'},
-  {color:'white',pts:6,combo:'w6'},{color:'white',pts:7,combo:'w7'},
-  {color:'white',pts:8,combo:'w8'},{color:'white',pts:9,combo:'w9'},
-];
+const CARD_POOL = [];
+(function buildPool(){
+  const per={red:{k:'r',c4:'r4',c5:'r5'},yellow:{k:'y',c4:'y4',c5:'y5'},blue:{k:'b',c4:'b4',c5:'b5'}};
+  Object.entries(per).forEach(([color,o])=>{
+    [[1,o.k+'1',2],[2,o.k+'2',2],[3,'c3',2],[4,o.c4,2],[5,o.c5,2],[7,'c7',1]].forEach(([pts,combo,n])=>{
+      for(let i=0;i<n;i++) CARD_POOL.push({color,pts,combo});
+    });
+  });
+  for(let p=2;p<=9;p++) CARD_POOL.push({color:'white',pts:p,combo:'w'+p});
+})();
 
 const ALL_SOFORT = [
   {id:'S1', type:'sofort', pts:6},
   {id:'S2', type:'sofort', pts:8},
   {id:'S3', type:'sofort', pts:6},
-  {id:'S4', type:'sofort', pts:6},
+  {id:'S4', type:'sofort', pts:7},
   {id:'S5', type:'sofort', pts:7},
   {id:'S6', type:'sofort', pts:7},
-  {id:'S7', type:'sofort', pts:8},
-  {id:'S8', type:'sofort', pts:9},
-  {id:'S9', type:'sofort', pts:9},
+  {id:'S7', type:'sofort', pts:7},
+  {id:'S8', type:'sofort', pts:6},
+  {id:'S9', type:'sofort', pts:6},
   {id:'S10',type:'sofort', pts:8},
-  {id:'S11',type:'sofort', pts:7},
-  {id:'S12',type:'sofort', pts:7},
 ];
 
 const ALL_LANGZEIT = [
@@ -1255,7 +1224,6 @@ const ALL_LANGZEIT = [
   {id:'L2', type:'langzeit',pts:11},
   {id:'L3', type:'langzeit',pts:11},
   {id:'L4', type:'langzeit',pts:11},
-  {id:'L5', type:'langzeit',pts:11},
 ];
 
 function pickBonuses(){
@@ -1302,9 +1270,8 @@ function checkBonus(bonusId, tableau){
   if(bonusId==='S1') return all.filter(c=>COMBOS[c.combo].length===2).length>=5;
   if(bonusId==='S2') return maxCol()>=5;
   if(bonusId==='S3') return all.filter(c=>c.color==='white').length>=3;
-  if(bonusId==='S4') return all.filter(c=>c.pts<4).length>=3;
-  if(bonusId==='S5') return all.filter(c=>c.color==='yellow').length>=4;
-  if(bonusId==='S6'){
+  if(bonusId==='S4') return all.filter(c=>c.color==='yellow').length>=4;
+  if(bonusId==='S5'){
     // Complete row with no white card
     const maxR=maxCol();
     for(let r=0;r<maxR;r++){
@@ -1313,17 +1280,15 @@ function checkBonus(bonusId, tableau){
     }
     return false;
   }
-  if(bonusId==='S7') return [5,7].every(p=>all.some(c=>c.pts===p));
+  if(bonusId==='S6') return all.filter(c=>c.color==='blue').length>=3;
+  if(bonusId==='S7') return maxCol()>=4;
   if(bonusId==='S8') return ['red','yellow','blue','white'].every(col=>all.some(c=>c.color===col));
   if(bonusId==='S9') return all.length>=6;
   if(bonusId==='S10') return [2,3,4,5].every(p=>all.some(c=>c.pts===p));
-  if(bonusId==='S11') return maxCol()>=4;
-  if(bonusId==='S12') return all.filter(c=>c.color==='blue').length>=3;
   if(bonusId==='L1') return all.filter(c=>c.color==='yellow').length;
   if(bonusId==='L2') return maxCol();
   if(bonusId==='L3') return all.filter(c=>c.color==='blue').length;
   if(bonusId==='L4') return all.filter(c=>c.color==='red').length;
-  if(bonusId==='L5') return all.filter(c=>c.pts<=3).length;
   return 0;
 }
 
